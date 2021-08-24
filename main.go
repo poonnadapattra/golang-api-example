@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	configs "example.com/api-example/configs"
 	routers "example.com/api-example/routers"
@@ -19,6 +20,11 @@ func init() {
 }
 
 func main() {
-	log.Println("Server Running on Port: ", configs.PORT)
-	http.ListenAndServe(":"+configs.PORT, router)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = configs.PORT // Default port if not specified
+	}
+
+	log.Println("Server Running on Port: ", port)
+	http.ListenAndServe(":"+port, router)
 }
