@@ -19,6 +19,6 @@ func init() {
 }
 
 func main() {
-	log.Println("Server Running on Port: ", 8080)
-	http.ListenAndServe(":8080", router)
+	log.Println("Server Running on Port: ", configs.PORT)
+	http.ListenAndServe(":"+configs.PORT, router)
 }

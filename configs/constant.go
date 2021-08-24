@@ -17,6 +17,7 @@ var (
 	DB_USER     string = ""
 	DB_PORT     string = ""
 	DB_PASSWORD string = ""
+	PORT        string = ""
 )
 
 func InitConstantVariable() {
@@ -31,4 +32,5 @@ func InitConstantVariable() {
 	DB_USER, _ = viper.Get("DB_USER").(string)
 	DB_PORT, _ = viper.Get("DB_PORT").(string)
 	DB_PASSWORD, _ = viper.Get("DB_PASSWORD").(string)
+	PORT, _ = viper.Get("PORT").(string)
 }
