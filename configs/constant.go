@@ -2,6 +2,7 @@ package configs
 
 import (
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -12,12 +13,14 @@ type DBController struct {
 }
 
 var (
-	DB_NAME     string = ""
-	DB_HOST     string = ""
-	DB_USER     string = ""
-	DB_PORT     string = ""
-	DB_PASSWORD string = ""
-	PORT        string = ""
+	PORT           string = ""
+	DB_NAME        string = ""
+	DB_HOST        string = ""
+	DB_USER        string = ""
+	DB_PORT        string = ""
+	DB_PASSWORD    string = ""
+	REDIS_ADDRESS  string = ""
+	REDIS_PASSWORD string = ""
 )
 
 func InitConstantVariable() {
@@ -27,10 +30,20 @@ func InitConstantVariable() {
 		log.Fatalf("Error while reading config file %s", err)
 	}
 
-	DB_HOST, _ = viper.Get("DB_HOST").(string)
-	DB_NAME, _ = viper.Get("DB_NAME").(string)
-	DB_USER, _ = viper.Get("DB_USER").(string)
-	DB_PORT, _ = viper.Get("DB_PORT").(string)
-	DB_PASSWORD, _ = viper.Get("DB_PASSWORD").(string)
-	PORT, _ = viper.Get("PORT").(string)
+	PORT = geVeriable("PORT")
+	DB_HOST = geVeriable("DB_HOST")
+	DB_NAME = geVeriable("DB_NAME")
+	DB_USER = geVeriable("DB_USER")
+	DB_PORT = geVeriable("DB_PORT")
+	DB_PASSWORD = geVeriable("DB_PASSWORD")
+	REDIS_ADDRESS = geVeriable("REDIS_ADDRESS")
+	REDIS_PASSWORD = geVeriable("REDIS_PASSWORD")
+
+}
+
+func geVeriable(key string) string {
+	if value, _ := viper.Get(key).(string); value != "" {
+		return value
+	}
+	return os.Getenv(key)
 }
