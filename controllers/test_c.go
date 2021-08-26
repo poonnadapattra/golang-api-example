@@ -40,5 +40,15 @@ func (ctrls *Controllers) SetTestRedis(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	c.JSON(http.StatusAccepted, gin.H{"message": "SUCCESS"})
+	c.JSON(http.StatusAccepted, gin.H{"message": "Success"})
+}
+
+func (ctrls *Controllers) DeleteTestRedis(c *gin.Context) {
+	key := c.Param("key")
+
+	err := ctrls.RedisService.DeleteValue(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.JSON(http.StatusAccepted, gin.H{"message": "Success"})
 }

@@ -34,3 +34,11 @@ func (redis *Redis) SetValue(key string, value string, s time.Duration) (err err
 	}
 	return
 }
+
+func (redis *Redis) DeleteValue(key string) (err error) {
+	err = redis.Redis.Del(ctx, key).Err()
+	if err != nil {
+		log.Println(err)
+	}
+	return
+}

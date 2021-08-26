@@ -10,5 +10,6 @@ func SetTestRoutes(router *gin.RouterGroup, ctrls *controllers.Controllers) {
 	router.GET("test", ctrls.GetTest)
 	router.GET("test/redis/:key", ctrls.GetTestRedis)
 	router.POST("test/redis", ctrls.SetTestRedis)
+	router.DELETE("test/redis/:key", ctrls.DeleteTestRedis)
 
 }
