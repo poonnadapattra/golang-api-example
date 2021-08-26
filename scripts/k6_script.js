@@ -6,12 +6,12 @@ export let options = {
     contacts: {
       executor: 'per-vu-iterations',
       vus: 3,
-      iterations: 50,
-      maxDuration: '1h30m',
+      iterations: 100,
+      maxDuration: '30m',
     },
   },
 };
 
 export default function () {
-  http.get('http://localhost:3000/api/collections');
+  http.get('https://api-golang-restful.herokuapp.com/api/collections');
 }
