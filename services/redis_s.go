@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -21,15 +22,15 @@ type RedisDataStruct struct {
 func (redis *Redis) GetValue(key string) (val string, err error) {
 	val, err = redis.Redis.Get(ctx, key).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return
 }
 
-func (redis *Redis) SetValue(key string, value string) (err error) {
-	err = redis.Redis.Set(ctx, key, value, 0).Err()
+func (redis *Redis) SetValue(key string, value string, s time.Duration) (err error) {
+	err = redis.Redis.Set(ctx, key, value, s).Err()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return
 }

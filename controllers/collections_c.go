@@ -1,48 +1,64 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
+	"time"
 
 	"example.com/api-example/models"
 	"github.com/gin-gonic/gin"
 )
 
-func (db *DBController) GetCollection(c *gin.Context) {
+func (ctrls *Controllers) GetCollection(c *gin.Context) {
 	_type := c.Query("type")
 	_where := map[string]interface{}{}
-
-	if _type != "" {
-		_where["type"] = _type
-	}
+	from := "database"
 
 	var collections []models.Collections
-	db.Database.Where(_where).Find(&collections)
+	val, err := ctrls.RedisService.GetValue("get_collections")
 
-	for i, _ := range collections {
-		db.Database.Model(collections[i]).Association("Groups").Find(&collections[i].Groups)
+	if err != nil {
+
+		if _type != "" {
+			_where["type"] = _type
+		}
+
+		ctrls.Database.Where(_where).Find(&collections)
+
+		for i, _ := range collections {
+			ctrls.Database.Model(collections[i]).Association("Groups").Find(&collections[i].Groups)
+		}
+
+		data, _ := json.Marshal(collections)
+		ctrls.RedisService.SetValue("get_collections", string(data), 1*time.Minute)
+
+	} else {
+		from = "redis"
+		json.Unmarshal([]byte(val), &collections)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"results": &collections})
+	c.JSON(http.StatusOK, gin.H{"form": from, "count": len(collections), "results": &collections})
+
 }
 
-func (db *DBController) GetCollectionById(c *gin.Context) {
+func (ctrls *Controllers) GetCollectionById(c *gin.Context) {
 	id := c.Param("id")
 	var collections models.Collections
 
-	db.Database.First(&collections, id)
-	db.Database.Model(&collections).Association("Groups").Find(&collections.Groups)
+	ctrls.Database.First(&collections, id)
+	ctrls.Database.Model(&collections).Association("Groups").Find(&collections.Groups)
 
 	c.JSON(http.StatusOK, gin.H{"results": &collections})
 }
 
-func (db *DBController) CreateCollection(c *gin.Context) {
+func (ctrls *Controllers) CreateCollection(c *gin.Context) {
 	var collection models.Collections
 	err := c.ShouldBind(&collection)
 
-	result := db.Database.Create(&collection)
+	result := ctrls.Database.Create(&collection)
 	for i, _ := range collection.Groups {
 		collection.Groups[i].CollectionId = collection.Id
-		db.Database.Create(collection.Groups[i])
+		ctrls.Database.Create(collection.Groups[i])
 	}
 
 	if result.Error != nil || err != nil {
@@ -52,12 +68,12 @@ func (db *DBController) CreateCollection(c *gin.Context) {
 	}
 }
 
-func (db *DBController) UpdateCollection(c *gin.Context) {
+func (ctrls *Controllers) UpdateCollection(c *gin.Context) {
 
 	var collection models.Collections
 	err := c.ShouldBind(&collection)
 
-	result := db.Database.Updates(collection)
+	result := ctrls.Database.Updates(collection)
 
 	if result.Error != nil || err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"meassage": "Bad request."})
@@ -66,10 +82,10 @@ func (db *DBController) UpdateCollection(c *gin.Context) {
 	}
 }
 
-func (db *DBController) DeleteCollection(c *gin.Context) {
+func (ctrls *Controllers) DeleteCollection(c *gin.Context) {
 	id := c.Param("id")
 	var collections models.Collections
-	db.Database.Delete(&collections, id)
+	ctrls.Database.Delete(&collections, id)
 
 	c.JSON(http.StatusOK, gin.H{"message": http.StatusOK})
 }

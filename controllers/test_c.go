@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"example.com/api-example/models"
 	"github.com/gin-gonic/gin"
@@ -17,14 +18,25 @@ func (ctrls *Controllers) GetTest(c *gin.Context) {
 
 func (ctrls *Controllers) GetTestRedis(c *gin.Context) {
 	key := c.Param("key")
-	val, _ := ctrls.RedisService.GetValue(key)
-	c.JSON(http.StatusOK, gin.H{"message": "OK", "results": val})
+	val, err := ctrls.RedisService.GetValue(key)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Not Found", "results": nil})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "OK", "results": val})
+	}
+
 }
 
 func (ctrls *Controllers) SetTestRedis(c *gin.Context) {
-	var data = map[string]string{}
-	err := c.ShouldBind(&data)
-	err = ctrls.RedisService.SetValue(data["key"], data["value"])
+	var data = struct {
+		Key   string
+		Value string
+		Time  time.Duration
+	}{}
+	c.ShouldBind(&data)
+
+	err := ctrls.RedisService.SetValue(data.Key, data.Value, data.Time*time.Second)
 	if err != nil {
 		log.Fatal(err)
 	}

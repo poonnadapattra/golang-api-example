@@ -19,7 +19,7 @@ func InitRouters(r *gin.Engine, db *gorm.DB, redis *redis.Client) {
 	}
 
 	api := r.Group("/api")
-	SetCollectionRoutes(api, db)
+	SetCollectionRoutes(api, ctrls)
 	SetTestRoutes(api, ctrls)
 
 	r.GET("/", func(c *gin.Context) {
