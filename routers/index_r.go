@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"example.com/api-example/controllers"
-	"example.com/api-example/services"
+	services "example.com/api-example/services/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"

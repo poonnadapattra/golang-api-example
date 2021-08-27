@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"example.com/api-example/services"
+	services "example.com/api-example/services/redis"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
 )

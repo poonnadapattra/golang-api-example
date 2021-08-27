@@ -12,7 +12,6 @@ import (
 func (ctrls *Controllers) GetTest(c *gin.Context) {
 	var collections []models.Collections
 	ctrls.Database.Find(&collections)
-
 	c.JSON(http.StatusOK, gin.H{"message": "OK", "results": collections})
 }
 
@@ -25,7 +24,6 @@ func (ctrls *Controllers) GetTestRedis(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"message": "OK", "results": val})
 	}
-
 }
 
 func (ctrls *Controllers) SetTestRedis(c *gin.Context) {

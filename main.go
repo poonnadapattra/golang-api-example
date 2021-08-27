@@ -4,8 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	configs "example.com/api-example/configs"
-	routers "example.com/api-example/routers"
+	"example.com/api-example/configs"
+	"example.com/api-example/routers"
+	dbService "example.com/api-example/services/db"
+	redisService "example.com/api-example/services/redis"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +16,8 @@ var router *gin.Engine
 
 func init() {
 	configs.InitConstantVariable()
-	redis := configs.InitRedis()
-	db, _ := configs.InitDatabase()
+	redis := redisService.InitRedis()
+	db, _ := dbService.InitDatabase()
 	router = gin.Default()
 	routers.InitRouters(router, db, redis)
 }
