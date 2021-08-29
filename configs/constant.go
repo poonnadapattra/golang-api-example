@@ -12,14 +12,15 @@ type DBController struct {
 }
 
 var (
-	PORT           string = "9999"
-	DB_NAME        string = ""
-	DB_HOST        string = ""
-	DB_USER        string = ""
-	DB_PORT        string = ""
-	DB_PASSWORD    string = ""
-	REDIS_ADDRESS  string = ""
-	REDIS_PASSWORD string = ""
+	PORT               string = "9999"
+	DB_NAME            string = ""
+	DB_HOST            string = ""
+	DB_USER            string = ""
+	DB_PORT            string = ""
+	DB_PASSWORD        string = ""
+	REDIS_ADDRESS      string = ""
+	REDIS_PASSWORD     string = ""
+	WEBIDENTITY_APIURL string = ""
 )
 
 func InitConstantVariable() {
@@ -38,6 +39,7 @@ func InitConstantVariable() {
 	DB_PASSWORD = geVeriable("DB_PASSWORD", DB_PASSWORD)
 	REDIS_ADDRESS = geVeriable("REDIS_ADDRESS", REDIS_ADDRESS)
 	REDIS_PASSWORD = geVeriable("REDIS_PASSWORD", REDIS_PASSWORD)
+	WEBIDENTITY_APIURL = geVeriable("WEBIDENTITY_APIURL", WEBIDENTITY_APIURL)
 
 }
 

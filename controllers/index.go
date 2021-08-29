@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	services "example.com/api-example/services/redis"
+	redisService "example.com/api-example/services/redis"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
 )
@@ -16,5 +16,5 @@ type RedisController struct {
 
 type Controllers struct {
 	Database     *gorm.DB
-	RedisService services.Redis
+	RedisService redisService.Redis
 }
