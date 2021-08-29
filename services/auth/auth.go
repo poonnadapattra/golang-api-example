@@ -7,6 +7,11 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+type Auth interface {
+	GenerateToken(email string, isUser bool) string
+	ValidateToken(encodedToken string) (*jwt.Token, error)
+}
+
 type authCustomClaims struct {
 	Name string `json:"name"`
 	User bool   `json:"user"`
@@ -16,6 +21,13 @@ type authCustomClaims struct {
 type jwtServices struct {
 	secretKey string
 	issure    string
+}
+
+func JWTAuthService() Auth {
+	return &jwtServices{
+		secretKey: "secret",
+		issure:    "erz",
+	}
 }
 
 func (service *jwtServices) GenerateToken(email string, isUser bool) string {
