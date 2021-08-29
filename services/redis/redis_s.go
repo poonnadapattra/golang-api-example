@@ -5,7 +5,6 @@ import (
 	"log"
 	"time"
 
-	"example.com/api-example/configs"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -18,16 +17,6 @@ type Redis struct {
 type RedisDataStruct struct {
 	Key   string
 	Value string
-}
-
-func InitRedis() *redis.Client {
-	rdb := redis.NewClient(&redis.Options{
-		Network:  "",
-		Addr:     configs.REDIS_ADDRESS,
-		Password: configs.REDIS_PASSWORD,
-	})
-
-	return rdb
 }
 
 func (redis *Redis) GetValue(key string) (val string, err error) {

@@ -1,4 +1,4 @@
-package db_services
+package database
 
 import (
 	"fmt"

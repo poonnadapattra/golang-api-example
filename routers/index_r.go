@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"example.com/api-example/controllers"
-	services "example.com/api-example/services/redis"
+	redisServices "example.com/api-example/services/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
@@ -12,7 +12,7 @@ import (
 
 func InitRouters(r *gin.Engine, db *gorm.DB, redis *redis.Client) {
 
-	redisService := services.Redis{Redis: redis}
+	redisService := redisServices.Redis{Redis: redis}
 	ctrls := &controllers.Controllers{
 		Database:     db,
 		RedisService: redisService,
