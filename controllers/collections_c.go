@@ -31,7 +31,7 @@ func (ctrls *Controllers) GetCollection(c *gin.Context) {
 		json.Unmarshal([]byte(val), &collections)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"form": from, "count": len(collections), "results": &collections})
+	c.JSON(http.StatusOK, gin.H{"from": from, "count": len(collections), "results": &collections})
 
 }
 
@@ -79,7 +79,11 @@ func (ctrls *Controllers) UpdateCollection(c *gin.Context) {
 func (ctrls *Controllers) DeleteCollection(c *gin.Context) {
 	id := c.Param("id")
 	var collections models.Collections
-	ctrls.Database.Delete(&collections, id)
+	result := ctrls.Database.Delete(&collections, id)
 
-	c.JSON(http.StatusOK, gin.H{"message": http.StatusOK})
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"meassage": "Bad request."})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "success"})
+	}
 }

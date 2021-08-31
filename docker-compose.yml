@@ -1,0 +1,10 @@
+version: '2.1'
+services:
+  api-example:
+    build: .
+    image: api-example
+    container_name: api-example
+    ports:
+      - 3000:3000
+    command: go run main.go
+    mem_limit: 300M
