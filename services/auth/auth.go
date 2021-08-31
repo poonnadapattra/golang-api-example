@@ -19,6 +19,13 @@ Giv+YJmd+8r6TYJB+Ar1TuP93jmgoy8vKY43+A==
 -----END RSA PRIVATE KEY-----
 `
 
+const publicKey = `
+-----BEGIN PUBLIC KEY-----
+MFswDQYJKoZIhvcNAQEBBQADSgAwRwJAc7DQV48nYshsJkVmuj0T1JSHlahAPiRY
+8z9r0DkFppzwO4zrx9uDFHcm6j9Kh09XUSht2yDGC6xqWgOtTJnw2QIDAQAB
+-----END PUBLIC KEY-----
+`
+
 type Auth interface {
 	GenerateToken(email string, isUser bool) string
 	ValidateToken(encodedToken string) (*jwt.Token, error)
@@ -68,11 +75,22 @@ func (service *jwtServices) GenerateToken(email string, isUser bool) string {
 }
 
 func (service *jwtServices) ValidateToken(encodedToken string) (*jwt.Token, error) {
-	return jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
-		if _, isvalid := token.Method.(*jwt.SigningMethodHMAC); !isvalid {
-			return nil, fmt.Errorf("Invalid token", token.Header["alg"])
+	PublicKey := []byte(publicKey)
+	key, err := jwt.ParseRSAPublicKeyFromPEM(PublicKey)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing RSA public key: %v\n", err)
+	}
+
+	parsedToken, err := jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(service.privateKey), nil
+		return key, nil
 	})
+	if err != nil {
+		return nil, fmt.Errorf("error parsing token: %v", err)
+	}
+
+	return parsedToken, nil
 
 }

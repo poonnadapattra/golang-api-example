@@ -46,7 +46,7 @@ func InitConstantVariable() {
 func geVeriable(key string, val string) string {
 	if value, _ := viper.Get(key).(string); value != "" {
 		return value
-	} else if value = os.Getenv(key); value != "" {
+	} else if value := os.Getenv(key); value != "" {
 		return value
 	}
 	return val

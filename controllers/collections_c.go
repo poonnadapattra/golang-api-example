@@ -3,9 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"example.com/api-example/models"
+	s "example.com/api-example/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,14 +23,8 @@ func (ctrls *Controllers) GetCollection(c *gin.Context) {
 			_where["type"] = _type
 		}
 
-		ctrls.Database.Where(_where).Find(&collections)
-
-		for i, _ := range collections {
-			ctrls.Database.Model(collections[i]).Association("Groups").Find(&collections[i].Groups)
-		}
-
-		data, _ := json.Marshal(collections)
-		ctrls.RedisService.SetValue("get_collections", string(data), 10*time.Minute)
+		c := s.GetCollection(ctrls.Database, _where)
+		collections = <-c
 
 	} else {
 		from = "redis"
