@@ -35,7 +35,6 @@ func (auth *Auth) Login(c *gin.Context) {
 
 	c.ShouldBind(&loginCredential)
 
-	fmt.Println("loginCredential", loginCredential)
 	var user models.Users
 	result := auth.Database.Where(
 		"username = ? AND password = ?",

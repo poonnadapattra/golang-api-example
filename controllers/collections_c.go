@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"example.com/api-example/models"
 	s "example.com/api-example/services"
@@ -15,9 +16,11 @@ func (ctrls *Controllers) GetCollection(c *gin.Context) {
 	from := "database"
 
 	var collections []models.Collections
-	val, err := ctrls.RedisService.GetValue("get_collections")
+	val, _ := ctrls.RedisService.GetValue("get_collections")
+	whereVal, _ := ctrls.RedisService.GetValue("get_collections_where")
+	whereData, _ := json.Marshal(_where)
 
-	if err != nil {
+	if whereVal != "" || string(whereData) != whereVal {
 
 		if _type != "" {
 			_where["type"] = _type
@@ -25,6 +28,10 @@ func (ctrls *Controllers) GetCollection(c *gin.Context) {
 
 		c := s.GetCollection(ctrls.Database, _where)
 		collections = <-c
+
+		data, _ := json.Marshal(collections)
+		ctrls.RedisService.SetValue("get_collections", string(data), 10*time.Minute)
+		ctrls.RedisService.SetValue("get_collections_where", string(whereData), 10*time.Minute)
 
 	} else {
 		from = "redis"
@@ -54,6 +61,22 @@ func (ctrls *Controllers) CreateCollection(c *gin.Context) {
 		collection.Groups[i].CollectionId = collection.Id
 		ctrls.Database.Create(collection.Groups[i])
 	}
+
+	if result.Error != nil || err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"meassage": "Bad request."})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"results": &collection})
+	}
+}
+
+func (ctrls *Controllers) PutCollection(c *gin.Context) {
+	id := c.Param("id")
+	var collection models.Collections
+
+	ctrls.Database.First(&collection, id)
+	err := c.ShouldBind(&collection)
+
+	result := ctrls.Database.Save(&collection)
 
 	if result.Error != nil || err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"meassage": "Bad request."})
